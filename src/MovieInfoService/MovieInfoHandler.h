@@ -38,8 +38,8 @@ MovieInfoServiceHandler::MovieInfoServiceHandler(mongoc_client_pool_t *mongodb_c
 	
 
  void MovieInfoServiceHandler::UploadMovies(std::string& _return, const std::vector<std::string> & movie_ids, const std::vector<std::string> & movie_titles, const std::vector<std::string> & movie_links){
-  std::cout << "************** Inside upload movies *************** !!!!!!!! ..." << movie_string <<" end "<< std::endl;
-	_return.push_back("upload movies"); 
+  std::cout << "************** Inside upload movies *************** !!!!!!!! ..." << std::endl;
+	_return = "upload movies"; 
  }
  
  void MovieInfoServiceHandler::GetMoviesByTitle(std::vector<std::string> & _return, const std::string& movie_string){
