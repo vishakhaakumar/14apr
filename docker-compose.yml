@@ -1,0 +1,40 @@
+version: "3"
+services:
+  recommender-service:
+    image: audreyaltman/movies-project:latest
+    hostname: recommender-service
+    restart: always
+    entrypoint: RecommenderService
+
+  movie-info-service:
+    image: audreyaltman/movies-project:latest
+    hostname: movie-info-service
+    restart: always
+    entrypoint: MovieInfoService
+    
+  user-likes-service:
+    image: audreyaltman/movies-project:latest
+    hostname: user-likes-service
+    restart: always
+    entrypoint: UserLikesService
+
+  recommender-mongodb:
+    image: mongo
+    hostname: recommender-mongodb
+    restart: always
+
+  movies-mongodb:
+    image: mongo
+    hostname: movies-mongodb
+    restart: always
+
+  nginx-thrift:
+    image: yg397/openresty-thrift:xenial
+    hostname: nginx-thrift
+    ports:
+      - 8080:8080
+    restart: always
+    volumes:
+      - ./nginx_reverse_proxy/lua-scripts:/usr/local/openresty/nginx/lua-scripts
+      - ./nginx_reverse_proxy/conf/nginx.conf:/usr/local/openresty/nginx/conf/nginx.conf
+      - ./gen-lua:/gen-lua
