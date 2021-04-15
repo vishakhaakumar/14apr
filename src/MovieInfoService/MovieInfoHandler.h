@@ -24,7 +24,7 @@ class MovieInfoServiceHandler : public MovieInfoServiceIf {
   void GetMoviesByIds(std::vector<std::string>& _return, const std::vector<std::string> & movie_ids) override;
   void GetMoviesByTitle(std::vector<std::string> & _return, const std::string& movie_string) override;
   void UploadMovies(std::string& _return, const std::vector<std::string> & movie_ids, const std::vector<std::string> & movie_titles, const std::vector<std::string> & movie_links) override;
-
+  void GetMovieLink(std::string& _return, const std::string& movie_name) override;
  private:
     mongoc_client_pool_t *_mongodb_client_pool;
     mongoc_client_t *mongodb_client;
@@ -36,7 +36,11 @@ MovieInfoServiceHandler::MovieInfoServiceHandler(mongoc_client_pool_t *mongodb_c
        mongodb_client = _mongodb_client;
 }
 	
-
+ void MovieInfoServiceHandler::GetMovieLink(std::string& _return, const std::string& movie_name){
+ std::cout << "************** Inside Get Movie Link *************** !!!!!!!! ..." << std::endl;
+ 	_return = "Movie link is :: ";
+ }
+	
  void MovieInfoServiceHandler::UploadMovies(std::string& _return, const std::vector<std::string> & movie_ids, const std::vector<std::string> & movie_titles, const std::vector<std::string> & movie_links){
   std::cout << "************** Inside upload movies *************** !!!!!!!! ..." << std::endl;
 	 // std::string idv = movie_ids[0];
