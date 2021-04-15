@@ -13,17 +13,10 @@ function _M.Upload()
   ngx.req.read_body()
         local post = ngx.req.get_post_args()
 
-        if (_StrIsEmpty(post.movie_name) ) then
-           ngx.status = ngx.HTTP_BAD_REQUEST
-           ngx.say("Incomplete arguments")
-           ngx.log(ngx.ERR, "Incomplete arguments")
-           ngx.exit(ngx.HTTP_BAD_REQUEST)
-        end
-
-  ngx.say("Inside Nginx Lua script: Processing Get Movie list... Request from: ", post.movie_name)
+ -- ngx.say("Inside Nginx Lua script: Processing Get Movie list... Request from: ", post.movie_name)
   local client = GenericObjectPool:connection(MovieInfoServiceClient, "movie-info-service", 9093)  
-  local movie_ids = {"MOV0001","MOV0002","MOV0003","MOV0004"};
-  local movie_titles = {"Avengers","Catwoman","Batman","Spiderman"};
+  local movie_ids = {"MOV00011","MOV00022","MOV00033","MOV00044"};
+  local movie_titles = {"Avengers I","Catwoman I","Batman I","Spiderman I"};
   local movie_links = {"a","b","c","d"};
 
   local status, ret = pcall(client.UploadMovies, client, movie_ids, movie_titles, movie_links)
@@ -35,17 +28,17 @@ function _M.Upload()
         ngx.status = ngx.HTTP_INTERNAL_SERVER_ERROR
         if (ret.message) then
             ngx.header.content_type = "text/plain"
-            ngx.say("Failed to get Movie names: " .. ret.message)
-            ngx.log(ngx.ERR, "Failed to get Movie names: " .. ret.message)
+            ngx.say("Failed to upload Movies: " .. ret.message)
+            ngx.log(ngx.ERR, "Failed to upload Movies: " .. ret.message)
         else
             ngx.header.content_type = "text/plain"
-            ngx.say("Failed to get Movie names: " )
-            ngx.log(ngx.ERR, "Failed to get Movie names: " )
+            ngx.say("Failed to uploadt Movies: " )
+            ngx.log(ngx.ERR, "Failed to upload Movies: " )
         end
         ngx.exit(ngx.HTTP_OK)
     else
 	ngx.header.content_type = "text/plain"
-	ngx.say("message is: ", ret)
+	ngx.say(ret)
     	ngx.exit(ngx.HTTP_OK)
     end
 

@@ -39,7 +39,61 @@ MovieInfoServiceHandler::MovieInfoServiceHandler(mongoc_client_pool_t *mongodb_c
 
  void MovieInfoServiceHandler::UploadMovies(std::string& _return, const std::vector<std::string> & movie_ids, const std::vector<std::string> & movie_titles, const std::vector<std::string> & movie_links){
   std::cout << "************** Inside upload movies *************** !!!!!!!! ..." << std::endl;
-	_return = "upload movies"; 
+	 // std::string idv = movie_ids[0];
+         // std::string titlev = movie_titles[0];
+	
+	 auto collection = mongoc_client_get_collection(
+         mongodb_client, "movies", "movie-info");
+	  if (!collection) {
+ 	          ServiceException se;
+  	          se.errorCode = ErrorCode::SE_MONGODB_ERROR;
+ 	          se.message = "Failed to create collection user from DB recommender";
+ 	          mongoc_client_pool_push(_mongodb_client_pool, mongodb_client);
+  	          throw se;
+ 		 }
+
+	mongoc_bulk_operation_t *bulk;
+ 	 bson_error_t error;
+	 bool ret;
+	 int i;
+
+	// std::vector<std::string> movie_ids1{"1234"};
+	// std::vector<std::string> movie_titles1{"Avengers II"};
+
+	 bulk = mongoc_collection_create_bulk_operation_with_opts (collection, NULL);
+
+	 for (i = 0; i < 4; i++) {
+	  bson_t *movie_doc = bson_new();
+	  std::string idv = movie_ids[i];
+          std::string titlev = movie_titles[i];
+	  std::string linkv = movie_links[i];
+	 // std::string &id = movie_ids1[i];
+	 // std::string &title = movie_titles1[i];
+	  BSON_APPEND_UTF8(movie_doc, "movie_id", idv.c_str());
+          BSON_APPEND_UTF8(movie_doc, "movie_title", titlev.c_str());
+	  BSON_APPEND_UTF8(movie_doc, "movie_link", linkv.c_str());
+
+	  mongoc_bulk_operation_insert (bulk, movie_doc);
+	  std::cout << "INSEERT **************************** "<< titlev.c_str() << " done" <<std::endl;
+	  bson_destroy(movie_doc);
+	 }
+	     std::cout << "BEFORE BULK DONE IN UPLOAD !!!!!!! ..." << std::endl;
+
+	  ret = mongoc_bulk_operation_execute (bulk, NULL, &error);
+	    if (!ret) {
+                  std::cout << "Movies data Insert failed ..." << std::endl;
+		  ServiceException se;
+                  se.errorCode = ErrorCode::SE_MONGODB_ERROR;
+                  se.message = error.message;
+		  throw se;
+                  }
+              std::cout << "DATA BULK INSERT DONE0 !!!!!!!! ..." << std::endl;
+
+              mongoc_collection_destroy(collection);
+              mongoc_client_pool_push(_mongodb_client_pool, mongodb_client);
+              mongoc_cleanup ();
+
+  _return = "Movies Uploaded Succesfully"; 
  }
  
  void MovieInfoServiceHandler::GetMoviesByTitle(std::vector<std::string> & _return, const std::string& movie_string){
